@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dynamic Design 2</title>
+	
+	<style type="text/css">
+		body{
+			margin: 0;
+		}
+
+
+		.posterContainer {
+			width: 21cm;
+			height: 29.7cm;
+			overflow: hidden;
+			border: 1px solid;
+			position: relative;
+			margin:auto;
+			transform: scale(0.65);
+			transform-origin: top left;
+		}
+
+		.images, .image-container{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+		    top: 0;
+		    left: 0;
+		}
+
+	
+
+		.images .image-container{
+			mix-blend-mode: difference;
+		}
+
+		.h2 {
+		    width: 100%;
+		    white-space: break-spaces;
+		    word-break: break-word;
+		}
+
+		.print{
+			position: fixed;
+			
+			bottom: 40px;
+			
+			color:black;
+			width:100%;
+			font-family:Arial;
+			font-size:28px;
+		}
+
+		.reload{
+			position: fixed;
+			
+			bottom: 0;
+			
+			color:black;
+			width:100%;
+			font-family:Arial;
+			font-size:28px;
+		}
+
+	</style>
+
+	<script type="text/javascript">
+
+	function random(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+	}
+
+	function shuffle(a) {
+	    for (let i = a.length - 1; i > 0; i--) {
+	        const j = Math.floor(Math.random() * (i + 1));
+	        [a[i], a[j]] = [a[j], a[i]];
+	    }
+	    return a;
+	}
+
+
+	const onPageLoad = async () => {
+
+		const API_URL = "https://dp.isiaurbino.net/api/x-publishing/workshop-coding/nina2/posters?limit=50";
+
+		const res = await fetch(API_URL).then(r => r.json());	
+		const posterFiles = res.data;
+
+		const randomPosters = shuffle(posterFiles).slice(0, 2);
+
+		const blendingModes = [
+				"normal", 
+				"multiply",
+				"screen",
+				"overlay",
+				"darken",
+				"lighten",
+				"color-dodge",
+				"color-burn",
+				"difference",
+				"exclusion",
+				"hue",
+				"saturation",
+				"color",
+				"luminosity",
+		];
+
+
+		const listOfSafewWebFonts = [
+			"Arial",
+			"Verdana",
+			"Trebuchet MS",
+			"Times New Roman",
+			"Didot",
+			"American Typewriter",
+			"Andale Mono",
+			"Courier",
+			"Bradley Hand",
+			"Luminari"
+		];
+
+		const imagesContainer = document.querySelector(".images");
+		randomPosters.forEach(imageFIle => {
+
+			const imgContainer = document.createElement("div");
+			imgContainer.className = "image-container";
+
+			const imageUrl = imageFIle.content.responsiveUrls[2] + ".jpg";
+
+			imgContainer.style.background = "url(" + imageUrl + ")";
+			imgContainer.style.backgroundRepeat = "no-repeat";
+			imgContainer.style.backgroundSize = "cover";
+		
+			imagesContainer.append(imgContainer);
+
+		})
+
+		const printBtn = document.querySelector('.print');
+		printBtn.onclick = () => {
+			window.print();
+		}
+
+	}
+
+	window.onload = onPageLoad;		
+</script>
+</head>
+<body>
+	
+	<div class="posterContainer">
+		<div class="images"></div>
+	</div>
+
+	<div class="print">Print</div>
+	<div class="reload">Reload</div>
+
+</body>
+</html>
